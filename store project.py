@@ -1,6 +1,6 @@
 import mysql.connector as db
 from datetime import datetime
-
+from tabulate import tabulate
 
 
 def searchIndex(list_a,index):
@@ -17,11 +17,9 @@ def order_picking(order_list):
     while True:
         print()
         print('Please check the avaliable items and quantity: ')
-        print(" * "*40)
-        print(' *'+"  "*10+' id  |  name  |   price  |  quantity   '+'  '*31)
-        for each in data:
-                   x=f" *{"  "*6}{each[0]} ----> {each[1]} ---> {each[3]} ----> {each[2]}"
-                   print(x+ '   '*(70-len(x)))
+        
+        
+        print(tabulate(data,headers=['veg_id','veg_name','quantity','price'],tablefmt='psql'))
         try:
 
             select_id=int(input('Please select the item id : '))
@@ -55,10 +53,8 @@ def order_picking(order_list):
         if next_order != '1':
             return order_list
 def order_display(order_list):
-    print('*')
-    print('*' +'  '*7+'id | name |  price | quantity  | total_price')
-    for each in order_list:
-        print(f"* {'  '*10} {each[0]} ----> {each[1]} ---> {each[2]} ----> {each[3]} ---> {each[4]}")
+    print(order_list)
+    print(tabulate(order_list,headers=['veg_id','veg_name','quantity','price','total_price'],tablefmt='psql'))
     total_price=sum([each[-1] for each in order_list])
     print()
     print('total bill for your orders id : ',total_price)
@@ -149,7 +145,9 @@ if conform == '1':
         args1=(cust_id,user_name,user_number)
         cur.callproc('store.insert_cst',args1)
     
-        
+    print('Customer name : ',user_name)
+    print('Customer number : ',user_number)
+    print('Customer id : ',cust_id)
     total_price=order_display(order_list)
     cur.execute('select * from store.transaction_Details')
     transaction_details=cur.fetchall()
